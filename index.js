@@ -29,7 +29,7 @@ app.use(cors());
 
 
 
-const UPLOADS_FOLDER = '../icare/public/uploads';
+const UPLOADS_FOLDER = '../home_icare_design/public/uploads';
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
