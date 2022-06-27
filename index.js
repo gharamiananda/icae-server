@@ -1,12 +1,11 @@
 const express = require('express')
 const app = express()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 var cors = require('cors')
 var multer = require('multer')
 const dotenv = require('dotenv').config()
 const port = process.env.PORT || 5000
-
 
 
 
@@ -21,6 +20,7 @@ var cors = require('cors')
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.json());
+app.use(express.static("uploads"));
 
 app.use(cors());
 
@@ -29,7 +29,7 @@ app.use(cors());
 
 
 
-const UPLOADS_FOLDER = '../home_icare_design/public/uploads';
+const UPLOADS_FOLDER = './uploads';
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -78,7 +78,10 @@ async function run() {
         const overviewHomeCollection = client.db('icare_data').collection('overview_home');
         const testimonialHomeCollection = client.db('icare_data').collection('rating_home');
         const rewardHomeCollection = client.db('icare_data').collection('award_home');
+        const courseCollection = client.db('icare_data').collection('course_home');
 
+        // About page Collection 
+        const vissionCollection = client.db('icare_data').collection('vission_home');
 
 
 
@@ -86,6 +89,21 @@ async function run() {
             const result = await bannerCollection.find().toArray();
             res.send(result)
         });
+
+        app.get('/banner', async (req, res) => {
+            const result = await bannerCollection.find().toArray();
+            res.send(result)
+        });
+
+        app.get('/banner/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await bannerCollection.findOne(query);
+            res.send(result);
+        })
+
+
         app.get('/feature_home', async (req, res) => {
             const result = await featureCollection.find().toArray();
             res.send(result)
@@ -115,8 +133,77 @@ async function run() {
             const result = await rewardHomeCollection.find().toArray();
             res.send(result);
         });
+        app.get('/course_home', async (req, res) => {
+            const result = await courseCollection.find().toArray();
+            res.send(result);
+        });
 
 
+        // About page get Api 
+        app.get('/vission_home', async (req, res) => {
+            const result = await vissionCollection.find().toArray();
+            res.send(result);
+        });
+
+
+
+
+
+
+
+        // Delete Api 
+        app.delete('/add-banner/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await bannerCollection.deleteOne(query);
+            res.send(result);
+        })
+
+
+        // Update Api
+
+        app.put('/update-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await bannerCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/update-banner/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(req.body)
+
+            if (title = "") {
+
+            }
+            // const filter = { _id: ObjectId(id) };
+            // const options = { upsert: true };
+
+            // const updatedDoc = {
+            //     $set: {
+            //         status: status.status,
+
+            //     }
+            // }
+
+            // const result = await bannerCollection.updateOne(filter, updatedDoc, options);
+            // res.send(result)
+
+        })
 
 
 
@@ -167,6 +254,22 @@ async function run() {
         app.post('/home_certificate', async (req, res) => {
             const collage = req.body;
             const result = await rewardHomeCollection.insertOne(collage);
+            res.send(result);
+
+
+        });
+
+        app.post('/home_course', async (req, res) => {
+            const collage = req.body;
+            const result = await courseCollection.insertOne(collage);
+            res.send(result);
+
+
+        });
+
+        app.post('/home_vission', async (req, res) => {
+            const collage = req.body;
+            const result = await vissionCollection.insertOne(collage);
             res.send(result);
 
 
