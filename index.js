@@ -185,23 +185,48 @@ async function run() {
 
         app.put('/update-banner/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(req.body)
+            let data = req.body
+            // console.log(data.title, data.desc, data.picture, data.link);
 
-            if (title = "") {
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.picture == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        title: data.title,
+                        subtitle: data.subtitle,
+                        desc: data.desc,
+                        link: data.link
+
+                    }
+                }
 
             }
-            // const filter = { _id: ObjectId(id) };
-            // const options = { upsert: true };
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        title: data.title,
+                        subtitle: data.subtitle,
+                        desc: data.desc,
+                        link: data.link,
+                        picture: data.picture
+                    }
+                }
+            }
 
-            // const updatedDoc = {
-            //     $set: {
-            //         status: status.status,
 
-            //     }
-            // }
 
-            // const result = await bannerCollection.updateOne(filter, updatedDoc, options);
-            // res.send(result)
+
+            const result = await bannerCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
 
         })
 
