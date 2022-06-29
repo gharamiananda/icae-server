@@ -108,6 +108,13 @@ async function run() {
             const result = await featureCollection.find().toArray();
             res.send(result)
         });
+        app.get('/feature_home/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await featureCollection.findOne(query);
+            res.send(result)
+        });
         app.get('/about_home', async (req, res) => {
             const result = await abouthomeCollection.find().toArray();
             res.send(result)
@@ -133,10 +140,20 @@ async function run() {
             const result = await rewardHomeCollection.find().toArray();
             res.send(result);
         });
+
         app.get('/course_home', async (req, res) => {
             const result = await courseCollection.find().toArray();
             res.send(result);
         });
+
+        app.get('/course-home/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await courseCollection.findOne(query);
+            res.send(result)
+        });
+
 
 
         // About page get Api 
@@ -160,10 +177,29 @@ async function run() {
             res.send(result);
         })
 
+        app.delete('/feature_home/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await featureCollection.deleteOne(query);
+            res.send(result);
+        })
 
-        // Update Api
+        app.delete('/course_home/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await courseCollection.deleteOne(query);
+            res.send(result);
+        })
 
-        app.put('/update-status/:id', async (req, res) => {
+
+
+
+        // Update status Api start 
+
+
+        app.put('/banner-status/:id', async (req, res) => {
             const id = req.params.id;
             const status = req.body;
 
@@ -183,6 +219,26 @@ async function run() {
 
         })
 
+        app.put('/feature-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await featureCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+        // Update status Api end
         app.put('/update-banner/:id', async (req, res) => {
             const id = req.params.id;
             let data = req.body
@@ -230,6 +286,50 @@ async function run() {
 
         })
 
+        app.put('/home_feature/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    title: data.title,
+                    fontLink: data.fontLink,
+                    desc: data.desc,
+                    readMoreLink: data.readMoreLink
+
+                }
+            }
+
+            const result = await featureCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/course_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    title: data.title,
+                    fontLink: data.fontLink,
+                    desc: data.desc,
+                    readMoreLink: data.readMoreLink
+
+                }
+            }
+
+            const result = await featureCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
 
 
         // Post api 
@@ -251,11 +351,17 @@ async function run() {
             res.send(result);
         });
 
+
+
         app.post('/home_about', async (req, res) => {
             const feature = req.body;
             const result = await abouthomeCollection.insertOne(feature);
             res.send(result);
         });
+
+
+
+
         app.post('/home_choose', async (req, res) => {
             const feature = req.body;
             const result = await choosehomeCollection.insertOne(feature);
@@ -301,6 +407,7 @@ async function run() {
         });
 
 
+
         app.post('/api/images', upload.single('image'), (req, res) => {
             console.log(req.file);
             if (!req.file) {
@@ -311,6 +418,7 @@ async function run() {
                 res.send({ code: 200, msg: "upload successfully", result })
             }
         })
+
 
 
     }
