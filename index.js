@@ -83,6 +83,235 @@ async function run() {
         // About page Collection 
         const vissionCollection = client.db('icare_data').collection('vission_home');
 
+        // Admission page collection 
+        const admission_page_aboutCollection = client.db('icare_data').collection('admission_page_about');
+
+        // Academic page collection 
+        const academic_page_pgCollection = client.db('icare_data').collection('academic_page_pg');
+        const academic_page_finanCollection = client.db('icare_data').collection('academic_page_finan');
+        const academic_page_ugCollection = client.db('icare_data').collection('academic_page_ug');
+
+
+        app.get('/pg', async (req, res) => {
+            const result = await academic_page_pgCollection.find().toArray();
+            res.send(result)
+        });
+        app.get('/finan', async (req, res) => {
+            const result = await academic_page_finanCollection.find().toArray();
+            res.send(result)
+        });
+        app.get('/ug', async (req, res) => {
+            const result = await academic_page_ugCollection.find().toArray();
+            res.send(result)
+        });
+
+        // Academic single Api
+        app.get('/pg/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await academic_page_pgCollection.findOne(query);
+            res.send(result);
+        })
+        app.get('/finan/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await academic_page_finanCollection.findOne(query);
+            res.send(result);
+        })
+        app.get('/ug/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await academic_page_ugCollection.findOne(query);
+            res.send(result);
+        })
+
+        // Academic POST Api
+
+        app.post('/pg_section', async (req, res) => {
+            const collage = req.body;
+            const result = await academic_page_pgCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
+        app.post('/finan_section', async (req, res) => {
+            const collage = req.body;
+            const result = await academic_page_finanCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
+        app.post('/ug_section', async (req, res) => {
+            const collage = req.body;
+            const result = await academic_page_ugCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
+
+        //Academic Delete Api 
+        app.delete('/pg_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await academic_page_pgCollection.deleteOne(query);
+            res.send(result);
+        })
+        app.delete('/finan_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await academic_page_finanCollection.deleteOne(query);
+            res.send(result);
+        })
+        app.delete('/ug_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await academic_page_ugCollection.deleteOne(query);
+            res.send(result);
+        })
+
+
+
+        // Update status Api 
+
+
+        app.put('/pg-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await academic_page_pgCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+        app.put('/finan-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await academic_page_finanCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+        app.put('/ug-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await academic_page_ugCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
+
+        // Upadte Api Start 
+
+
+        app.put('/pg_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    title: data.title,
+                    sits: data.sits,
+
+                }
+            }
+
+            const result = await academic_page_pgCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/finan_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    title: data.title,
+                    sits: data.sits,
+
+                }
+            }
+
+            const result = await academic_page_finanCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/ug_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    title: data.title,
+                    sits: data.sits,
+
+                }
+            }
+
+            const result = await academic_page_ugCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        // Academic page collection end
+
+
 
 
         app.get('/banner', async (req, res) => {
@@ -128,14 +357,37 @@ async function run() {
             const result = await collagehomeCollection.find().toArray();
             res.send(result);
         });
+
+
+        app.get('/collage_home_detail/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await collagehomeCollection.findOne(query);
+            res.send(result)
+        });
+
+
         app.get('/overview_home', async (req, res) => {
             const result = await overviewHomeCollection.find().toArray();
             res.send(result);
         });
+
+
         app.get('/testimonial_home', async (req, res) => {
             const result = await testimonialHomeCollection.find().toArray();
             res.send(result);
         });
+
+
+        app.get('/testimonial_home_detail/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await testimonialHomeCollection.findOne(query);
+            res.send(result)
+        });
+
         app.get('/home-certificate', async (req, res) => {
             const result = await rewardHomeCollection.find().toArray();
             res.send(result);
@@ -159,6 +411,13 @@ async function run() {
         // About page get Api 
         app.get('/vission_home', async (req, res) => {
             const result = await vissionCollection.find().toArray();
+            res.send(result);
+        });
+
+
+        // Mission page get Api 
+        app.get('/mission_page', async (req, res) => {
+            const result = await admission_page_aboutCollection.find().toArray();
             res.send(result);
         });
 
@@ -190,6 +449,31 @@ async function run() {
             console.log(id)
             const query = { _id: ObjectId(id) };
             const result = await courseCollection.deleteOne(query);
+            res.send(result);
+        })
+
+
+        app.delete('/collage_home_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await collagehomeCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.delete('/testimonial_home_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await testimonialHomeCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.delete('/award_home_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await rewardHomeCollection.deleteOne(query);
             res.send(result);
         })
 
@@ -238,7 +522,197 @@ async function run() {
             res.send(result)
 
         })
+
+
+
+        app.put('/about-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await abouthomeCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+        app.put('/choose-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await choosehomeCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/course-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await courseCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+        app.put('/overview-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await overviewHomeCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+        app.put('/collage-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await collagehomeCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/testimonial-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await testimonialHomeCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+        app.put('/award-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await rewardHomeCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/vission-status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await vissionCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+        app.put('/admission_page_status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await admission_page_aboutCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
         // Update status Api end
+
+
+        // Update Api 
         app.put('/update-banner/:id', async (req, res) => {
             const id = req.params.id;
             let data = req.body
@@ -286,6 +760,285 @@ async function run() {
 
         })
 
+
+
+        app.put('/update-about/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+            // console.log(data.title, data.desc, data.picture, data.link);
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.image == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        aboutTitle: data.aboutTitle,
+                        percentage: data.percentage,
+                        aboutDesc: data.aboutDesc,
+
+
+                    }
+                }
+
+            }
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        aboutTitle: data.aboutTitle,
+                        percentage: data.percentage,
+                        aboutDesc: data.aboutDesc,
+                        image: data.image
+                    }
+                }
+            }
+
+
+
+
+            const result = await abouthomeCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
+        app.put('/update-choose/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+            // console.log(data.title, data.desc, data.picture, data.link);
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.image == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        mainTitle: data.mainTitle,
+                        subTitileOne: data.subTitileOne,
+                        subTitileTwo: data.subTitileTwo,
+                        subTitileThree: data.subTitileThree,
+                        subTitileFour: data.subTitileFour,
+
+
+                    }
+                }
+
+            }
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        mainTitle: data.mainTitle,
+                        subTitileOne: data.subTitileOne,
+                        subTitileTwo: data.subTitileTwo,
+                        subTitileThree: data.subTitileThree,
+                        subTitileFour: data.subTitileFour,
+                        image: data.image
+                    }
+                }
+            }
+
+
+
+
+            const result = await choosehomeCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
+        app.put('/course_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+            // console.log(data.title, data.desc, data.picture, data.link);
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.picture == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        title: data.title,
+
+
+
+                    }
+                }
+
+            }
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        title: data.title,
+
+                        picture: data.picture
+                    }
+                }
+            }
+
+
+
+
+            const result = await courseCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
+
+        app.put('/collage_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+            // console.log(data.title, data.desc, data.picture, data.link);
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.image == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        collageName: data.collageName,
+                        collageLink: data.collageLink,
+                        collageDesc: data.collageDesc,
+
+
+
+
+                    }
+                }
+
+            }
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        collageName: data.collageName,
+                        collageLink: data.collageLink,
+                        collageDesc: data.collageDesc,
+
+                        image: data.image,
+                    }
+                }
+            }
+
+
+
+
+            const result = await collagehomeCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
+        app.put('/admission_vission_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+            // console.log(data.title, data.desc, data.picture, data.link);
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.imageOne == "" && data.imageTwo == "") {
+                console.log("image not selected");
+
+                updatedDoc = {
+                    $set: {
+                        firstTitle: data.firstTitle,
+                        percentage: data.percentage,
+                        subone: data.subone,
+                        subTwo: data.subTwo,
+                        subThree: data.subThree,
+
+
+                    }
+                }
+
+            }
+            else if (data.imageOne == "") {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        firstTitle: data.firstTitle,
+                        percentage: data.percentage,
+                        subone: data.subone,
+                        subTwo: data.subTwo,
+                        subThree: data.subThree,
+                        imageTwo: data.imageTwo,
+                    }
+                }
+            } else if (data.imageTwo == "") {
+                updatedDoc = {
+                    $set: {
+                        firstTitle: data.firstTitle,
+                        percentage: data.percentage,
+                        subone: data.subone,
+                        subTwo: data.subTwo,
+                        subThree: data.subThree,
+                        imageOne: data.imageOne,
+
+                    }
+                }
+            } else {
+                updatedDoc = {
+                    $set: {
+                        firstTitle: data.firstTitle,
+                        percentage: data.percentage,
+                        subone: data.subone,
+                        subTwo: data.subTwo,
+                        subThree: data.subThree,
+                        imageOne: data.imageOne,
+                        imageTwo: data.imageTwo,
+
+                    }
+                }
+            }
+
+
+
+
+            const result = await admission_page_aboutCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
         app.put('/home_feature/:id', async (req, res) => {
             const id = req.params.id;
             let data = req.body
@@ -308,7 +1061,7 @@ async function run() {
 
         })
 
-        app.put('/course_update/:id', async (req, res) => {
+        app.put('/testimonial_update/:id', async (req, res) => {
             const id = req.params.id;
             let data = req.body
 
@@ -317,19 +1070,123 @@ async function run() {
 
             const updatedDoc = {
                 $set: {
-                    title: data.title,
-                    fontLink: data.fontLink,
                     desc: data.desc,
-                    readMoreLink: data.readMoreLink
+                    username: data.username,
+
 
                 }
             }
 
-            const result = await featureCollection.updateOne(filter, updatedDoc, options);
+            const result = await testimonialHomeCollection.updateOne(filter, updatedDoc, options);
             res.send(result)
 
         })
 
+
+
+        // About PAge Update API
+
+        app.put('/home_vission_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    firstTitle: data.firstTitle,
+                    collageDesc: data.collageDesc,
+                    subone: data.subone,
+                    subTwo: data.subTwo,
+                    subTwo: data.subTwo,
+                    subThree: data.subThree,
+                    subFour: data.subFour,
+                    subFive: data.subFive,
+                    subSix: data.subSix,
+                    secondTitle: data.secondTitle,
+                    secondDesc: data.secondDesc,
+
+
+                }
+            }
+
+            const result = await vissionCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        // app.put('/course_update/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     let data = req.body
+
+        //     const filter = { _id: ObjectId(id) };
+        //     const options = { upsert: true };
+
+        //     const updatedDoc = {
+        //         $set: {
+        //             title: data.title,
+        //             fontLink: data.fontLink,
+        //             desc: data.desc,
+        //             readMoreLink: data.readMoreLink
+
+        //         }
+        //     }
+
+        //     const result = await featureCollection.updateOne(filter, updatedDoc, options);
+        //     res.send(result)
+
+        // })
+
+
+
+
+
+        app.put('/update-about/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+            // console.log(data.title, data.desc, data.picture, data.link);
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.image == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        aboutTitle: data.aboutTitle,
+                        percentage: data.percentage,
+                        aboutDesc: data.aboutDesc,
+
+
+                    }
+                }
+
+            }
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        aboutTitle: data.aboutTitle,
+                        percentage: data.percentage,
+                        aboutDesc: data.aboutDesc,
+                        image: data.image
+                    }
+                }
+            }
+
+
+
+
+            const result = await choosehomeCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
 
 
         // Post api 
