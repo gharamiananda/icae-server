@@ -6,7 +6,7 @@ var cors = require('cors')
 var multer = require('multer')
 const dotenv = require('dotenv').config()
 const port = process.env.PORT || 5000
-
+const jwt = require('jsonwebtoken');
 
 
 
@@ -91,6 +91,106 @@ async function run() {
         const academic_page_finanCollection = client.db('icare_data').collection('academic_page_finan');
         const academic_page_ugCollection = client.db('icare_data').collection('academic_page_ug');
 
+        // Inner banner collection  start
+        const innerBannerCollection = client.db('icare_data').collection('inner_banner')
+
+
+
+
+
+        app.get('/inner_banner_get', async (req, res) => {
+            const result = await innerBannerCollection.find().toArray();
+            res.send(result)
+        });
+
+        app.post('/inner_banner_post', async (req, res) => {
+            const collage = req.body;
+            const result = await innerBannerCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
+
+        // Update Api 
+        app.put('/inner_banner_update/:page', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+            // console.log(data.title, data.desc, data.picture, data.link);
+
+
+            const filter = { page: data.page };
+
+            console.log(filter)
+
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.image == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        collageName: data.collageName,
+                        page: data.page,
+
+
+
+                    }
+                }
+
+            }
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        collageName: data.collageName,
+                        page: data.page,
+                        image: data.image
+
+                    }
+                }
+            }
+
+
+
+
+            const result = await innerBannerCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
+        // Contact page form sumission 
+
+        const formCollection = client.db('icare_data').collection('c_form');
+        const newsCollection = client.db('icare_data').collection('news_letter');
+
+        app.get('/c_form_get', async (req, res) => {
+            const result = await formCollection.find().toArray();
+            res.send(result)
+        });
+        app.get('/news_get', async (req, res) => {
+            const result = await newsCollection.find().toArray();
+            res.send(result)
+        });
+
+
+
+        app.post('/news_post', async (req, res) => {
+            const collage = req.body;
+            const result = await newsCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
+
+
+
+        // Contact page form sumission End
 
         app.get('/pg', async (req, res) => {
             const result = await academic_page_pgCollection.find().toArray();
@@ -314,10 +414,7 @@ async function run() {
 
 
 
-        app.get('/banner', async (req, res) => {
-            const result = await bannerCollection.find().toArray();
-            res.send(result)
-        });
+
 
         app.get('/banner', async (req, res) => {
             const result = await bannerCollection.find().toArray();
@@ -1278,6 +1375,16 @@ async function run() {
 
 
 
+        app.post("/login_check", (req, res) => {
+            const email = req.body;
+
+            const token = jwt.sign(email, process.env.ACCESS_TOKEN_SECRET);
+
+            res.send({ token })
+        })
+
+
+
     }
     finally {
 
@@ -1297,3 +1404,21 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
+
+
+
+
+// verify token function
+function verifyToken(token) {
+    let email;
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+        if (err) {
+            email = 'Invalid email'
+        }
+        if (decoded) {
+            console.log(decoded)
+            email = decoded
+        }
+    });
+    return email;
+}
