@@ -93,7 +93,20 @@ async function run() {
 
         // Inner banner collection  start
         const innerBannerCollection = client.db('icare_data').collection('inner_banner')
+        // Collage details page 
+        const collageDetailAboutCollection = client.db('icare_data').collection('collage_details_about')
+        const collageDetailmoreCollection = client.db('icare_data').collection('collage_details_more')
 
+        app.get('/collage_details_about_get', async (req, res) => {
+            const result = await collageDetailAboutCollection.find().toArray();
+            res.send(result)
+        });
+
+
+        app.get('/collage_details_more_get', async (req, res) => {
+            const result = await collageDetailmoreCollection.find().toArray();
+            res.send(result)
+        });
 
 
 
@@ -804,6 +817,25 @@ async function run() {
             res.send(result)
 
         })
+        app.put('/collage_details_about__status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await collageDetailAboutCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
 
 
         // Update status Api end
@@ -1136,6 +1168,83 @@ async function run() {
 
 
 
+
+
+        app.put('/collage_details_about_update/:collage', async (req, res) => {
+            const collage = req.params.collage;
+            let data = req.body
+            // console.log(data.title, data.desc, data.picture, data.link);
+
+
+            const filter = { collage };
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.imageOne == "" && data.imageTwo == "") {
+                console.log("image not selected");
+
+                updatedDoc = {
+                    $set: {
+                        firstTitle: data.firstTitle,
+
+                        subone: data.subone,
+                        subTwo: data.subTwo,
+                        collage: data.collage
+
+
+                    }
+                }
+
+            }
+            else if (data.imageOne == "") {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        firstTitle: data.firstTitle,
+
+                        subone: data.subone,
+                        subTwo: data.subTwo,
+                        collage: data.collage,
+                        imageTwo: data.imageTwo,
+                    }
+                }
+            } else if (data.imageTwo == "") {
+                updatedDoc = {
+                    $set: {
+                        firstTitle: data.firstTitle,
+
+                        subone: data.subone,
+                        subTwo: data.subTwo,
+                        collage: data.collage,
+                        imageOne: data.imageOne,
+
+                    }
+                }
+            } else {
+                updatedDoc = {
+                    $set: {
+                        firstTitle: data.firstTitle,
+
+                        subone: data.subone,
+                        subTwo: data.subTwo,
+
+                        imageOne: data.imageOne,
+                        imageTwo: data.imageTwo,
+                        collage: data.collage
+                    }
+                }
+            }
+
+
+
+
+            const result = await collageDetailAboutCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
         app.put('/home_feature/:id', async (req, res) => {
             const id = req.params.id;
             let data = req.body
@@ -1286,11 +1395,24 @@ async function run() {
         })
 
 
+
         // Post api 
 
         app.post('/home_feature', async (req, res) => {
             const feature = req.body;
             const result = await featureCollection.insertOne(feature);
+            res.send(result);
+        });
+
+        app.post('/collage_details_about_post', async (req, res) => {
+            const feature = req.body;
+            const result = await collageDetailAboutCollection.insertOne(feature);
+            res.send(result);
+        });
+
+        app.post('/collage_details_more_post', async (req, res) => {
+            const feature = req.body;
+            const result = await collageDetailmoreCollection.insertOne(feature);
             res.send(result);
         });
 
