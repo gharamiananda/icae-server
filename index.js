@@ -96,6 +96,29 @@ async function run() {
         // Collage details page 
         const collageDetailAboutCollection = client.db('icare_data').collection('collage_details_about')
         const collageDetailmoreCollection = client.db('icare_data').collection('collage_details_more')
+        const teamCollection = client.db('icare_data').collection('team_member')
+        const collageCourseCollection = client.db('icare_data').collection('collage_course')
+
+
+
+
+
+
+
+
+
+
+
+        app.get('/collage_course_get', async (req, res) => {
+            const result = await collageCourseCollection.find().toArray();
+            res.send(result)
+        });
+
+
+        app.get('/team_member_get', async (req, res) => {
+            const result = await teamCollection.find().toArray();
+            res.send(result)
+        });
 
         app.get('/collage_details_about_get', async (req, res) => {
             const result = await collageDetailAboutCollection.find().toArray();
@@ -115,6 +138,22 @@ async function run() {
             const result = await innerBannerCollection.find().toArray();
             res.send(result)
         });
+
+        app.post('/collage_course_post', async (req, res) => {
+            const collage = req.body;
+            const result = await collageCourseCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
+
+        app.post('/team_member_post', async (req, res) => {
+            const collage = req.body;
+            const result = await teamCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
 
         app.post('/inner_banner_post', async (req, res) => {
             const collage = req.body;
@@ -170,6 +209,66 @@ async function run() {
 
 
             const result = await innerBannerCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+        app.put('/team_member_update/:membername', async (req, res) => {
+            const membername = req.params.membername;
+
+            let data = req.body
+
+            console.log(membername, data)
+
+
+            const filter = { membername: data.membername };
+
+
+
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.image == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        membername: data.membername,
+                        designation: data.designation,
+                        status: data.status,
+                        social1: data.social1,
+                        social2: data.social2,
+                        social3: data.social3,
+
+
+
+                    }
+                }
+
+            }
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        membername: data.membername,
+                        designation: data.designation,
+                        status: data.status,
+                        social1: data.social1,
+                        social2: data.social2,
+                        social3: data.social3,
+                        image: data.image
+
+                    }
+                }
+            }
+
+
+
+
+            const result = await teamCollection.updateOne(filter, updatedDoc, options);
             res.send(result)
 
         })
@@ -273,6 +372,24 @@ async function run() {
             const result = await academic_page_pgCollection.deleteOne(query);
             res.send(result);
         })
+
+        app.delete('/collage_course_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await collageCourseCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.delete('/team_member_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await teamCollection.deleteOne(query);
+            res.send(result);
+        })
+
+
         app.delete('/finan_delete/:id', async (req, res) => {
             const id = req.params.id;
             console.log(id)
@@ -441,6 +558,13 @@ async function run() {
             const result = await bannerCollection.findOne(query);
             res.send(result);
         })
+        // app.get('/single_course/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     console.log(id)
+        //     const query = { _id: ObjectId(id) };
+        //     const result = await collageCourseCollection.findOne(query);
+        //     res.send(result);
+        // })
 
 
         app.get('/feature_home', async (req, res) => {
@@ -817,6 +941,33 @@ async function run() {
             res.send(result)
 
         })
+
+
+
+        app.put('/collage_details_more_status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await collageDetailmoreCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
+
         app.put('/collage_details_about__status/:id', async (req, res) => {
             const id = req.params.id;
             const status = req.body;
@@ -833,6 +984,46 @@ async function run() {
             }
 
             const result = await collageDetailAboutCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/collage_course_status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await collageCourseCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/team_member_status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await teamCollection.updateOne(filter, updatedDoc, options);
             res.send(result)
 
         })
@@ -1290,6 +1481,29 @@ async function run() {
 
 
 
+        app.put('/collage_course_update/:collage', async (req, res) => {
+            const collage = req.params.collage;
+            let data = req.body
+
+            const filter = { collage: data.collage };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    collage: data.collage,
+                    course: data.course,
+
+
+                }
+            }
+
+            const result = await collageCourseCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
         // About PAge Update API
 
         app.put('/home_vission_update/:id', async (req, res) => {
@@ -1318,6 +1532,31 @@ async function run() {
             }
 
             const result = await vissionCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/collage_details_more_update/:collage', async (req, res) => {
+            const collage = req.params.collage;
+            let data = req.body
+
+            const filter = { collage };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    collage: data.collage,
+                    websiteLink: data.websiteLink,
+                    address: data.address,
+                    phone: data.phone,
+
+
+
+
+                }
+            }
+
+            const result = await collageDetailmoreCollection.updateOne(filter, updatedDoc, options);
             res.send(result)
 
         })
