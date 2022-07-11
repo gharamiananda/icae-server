@@ -109,6 +109,7 @@ async function run() {
 
 
 
+
         app.get('/collage_course_get', async (req, res) => {
             const result = await collageCourseCollection.find().toArray();
             res.send(result)
@@ -280,11 +281,19 @@ async function run() {
 
         const formCollection = client.db('icare_data').collection('c_form');
         const newsCollection = client.db('icare_data').collection('news_letter');
+        const donateCollection = client.db('icare_data').collection('donate');
+
+        app.get('/donate_get', async (req, res) => {
+            const result = await donateCollection.find().toArray();
+            res.send(result)
+        });
 
         app.get('/c_form_get', async (req, res) => {
             const result = await formCollection.find().toArray();
             res.send(result)
         });
+
+
         app.get('/news_get', async (req, res) => {
             const result = await newsCollection.find().toArray();
             res.send(result)
@@ -295,6 +304,21 @@ async function run() {
         app.post('/news_post', async (req, res) => {
             const collage = req.body;
             const result = await newsCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
+        app.post('/donate_post', async (req, res) => {
+            const collage = req.body;
+            const result = await donateCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
+
+        app.post('/c_form_post', async (req, res) => {
+            const collage = req.body;
+            const result = await formCollection.insertOne(collage);
             res.send(result);
 
         });
