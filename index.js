@@ -99,6 +99,8 @@ async function run() {
         const teamCollection = client.db('icare_data').collection('team_member')
         const collageCourseCollection = client.db('icare_data').collection('collage_course')
 
+        const toolRoomAboutCollection = client.db('icare_data').collection('tool_room')
+
 
 
 
@@ -123,6 +125,11 @@ async function run() {
 
         app.get('/collage_details_about_get', async (req, res) => {
             const result = await collageDetailAboutCollection.find().toArray();
+            res.send(result)
+        });
+
+        app.get('/toolroom_get', async (req, res) => {
+            const result = await toolRoomAboutCollection.find().toArray();
             res.send(result)
         });
 
@@ -282,9 +289,22 @@ async function run() {
         const formCollection = client.db('icare_data').collection('c_form');
         const newsCollection = client.db('icare_data').collection('news_letter');
         const donateCollection = client.db('icare_data').collection('donate');
+        const resumeCollection = client.db('icare_data').collection('resume');
+        const tenderCollection = client.db('icare_data').collection('tenders');
+
+        app.get('/tender_get', async (req, res) => {
+            const result = await tenderCollection.find().toArray();
+            res.send(result)
+        });
 
         app.get('/donate_get', async (req, res) => {
             const result = await donateCollection.find().toArray();
+            res.send(result)
+        });
+
+
+        app.get('/resume_get', async (req, res) => {
+            const result = await resumeCollection.find().toArray();
             res.send(result)
         });
 
@@ -307,10 +327,23 @@ async function run() {
             res.send(result);
 
         });
+        app.post('/tender_post', async (req, res) => {
+            const collage = req.body;
+            const result = await tenderCollection.insertOne(collage);
+            res.send(result);
+
+        });
 
         app.post('/donate_post', async (req, res) => {
             const collage = req.body;
             const result = await donateCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
+        app.post('/resume_post', async (req, res) => {
+            const collage = req.body;
+            const result = await resumeCollection.insertOne(collage);
             res.send(result);
 
         });
@@ -426,6 +459,14 @@ async function run() {
             console.log(id)
             const query = { _id: ObjectId(id) };
             const result = await academic_page_ugCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.delete('/tender_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await tenderCollection.deleteOne(query);
             res.send(result);
         })
 
@@ -803,6 +844,26 @@ async function run() {
 
         })
 
+        app.put('/toolroom_status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await toolRoomAboutCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
 
         app.put('/choose-status/:id', async (req, res) => {
             const id = req.params.id;
@@ -962,6 +1023,27 @@ async function run() {
             }
 
             const result = await admission_page_aboutCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+        app.put('/tender_status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await tenderCollection.updateOne(filter, updatedDoc, options);
             res.send(result)
 
         })
@@ -1155,6 +1237,57 @@ async function run() {
 
 
 
+        app.put('/toolroom_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+            // console.log(data.title, data.desc, data.picture, data.link);
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            let updatedDoc;
+            if (data.image == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        titlte2: data.titlte2,
+                        title1: data.title1,
+                        descOne: data.descOne,
+                        descTwo: data.descTwo,
+
+
+                    }
+                }
+
+            }
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        titlte2: data.titlte2,
+                        title1: data.title1,
+                        descOne: data.descOne,
+                        descTwo: data.descTwo,
+                        image: data.image
+                    }
+                }
+            }
+
+
+
+
+            const result = await toolRoomAboutCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
+
+
         app.put('/update-choose/:id', async (req, res) => {
             const id = req.params.id;
             let data = req.body
@@ -1226,6 +1359,7 @@ async function run() {
                 updatedDoc = {
                     $set: {
                         title: data.title,
+                        link: data.link,
 
 
 
@@ -1238,7 +1372,7 @@ async function run() {
                 updatedDoc = {
                     $set: {
                         title: data.title,
-
+                        link: data.link,
                         picture: data.picture
                     }
                 }
@@ -1670,6 +1804,11 @@ async function run() {
         app.post('/collage_details_about_post', async (req, res) => {
             const feature = req.body;
             const result = await collageDetailAboutCollection.insertOne(feature);
+            res.send(result);
+        });
+        app.post('/toolroom_post', async (req, res) => {
+            const feature = req.body;
+            const result = await toolRoomAboutCollection.insertOne(feature);
             res.send(result);
         });
 
