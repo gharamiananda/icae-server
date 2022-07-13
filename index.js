@@ -101,6 +101,8 @@ async function run() {
 
         const toolRoomAboutCollection = client.db('icare_data').collection('tool_room')
 
+        const courseDetailCollection = client.db('icare_data').collection('course_detail')
+
 
 
 
@@ -114,6 +116,11 @@ async function run() {
 
         app.get('/collage_course_get', async (req, res) => {
             const result = await collageCourseCollection.find().toArray();
+            res.send(result)
+        });
+
+        app.get('/detail_course_get', async (req, res) => {
+            const result = await courseDetailCollection.find().toArray();
             res.send(result)
         });
 
@@ -150,6 +157,13 @@ async function run() {
         app.post('/collage_course_post', async (req, res) => {
             const collage = req.body;
             const result = await collageCourseCollection.insertOne(collage);
+            res.send(result);
+
+        });
+
+        app.post('/detail_course_post', async (req, res) => {
+            const collage = req.body;
+            const result = await courseDetailCollection.insertOne(collage);
             res.send(result);
 
         });
@@ -427,6 +441,13 @@ async function run() {
             console.log(id)
             const query = { _id: ObjectId(id) };
             const result = await academic_page_pgCollection.deleteOne(query);
+            res.send(result);
+        })
+        app.delete('/course_details_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await courseDetailCollection.deleteOne(query);
             res.send(result);
         })
 
@@ -860,6 +881,26 @@ async function run() {
             }
 
             const result = await toolRoomAboutCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+        app.put('/course_detail_status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await courseDetailCollection.updateOne(filter, updatedDoc, options);
             res.send(result)
 
         })
