@@ -235,6 +235,58 @@ async function run() {
 
         })
 
+        // Update Api 
+        app.put('/detailsss_course_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+            console.log(data);
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+
+            let updatedDoc;
+            if (data.image == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        collagename: data.collagename,
+                        title1: data.title1,
+                        descOne: data.descOne,
+
+
+
+                    }
+                }
+
+            }
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        collagename: data.collagename,
+                        title1: data.title1,
+                        descOne: data.descOne,
+
+                        image: data.image
+
+                    }
+                }
+            }
+
+            console.log(updatedDoc)
+
+
+            const result = await courseDetailCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
 
         app.put('/team_member_update/:membername', async (req, res) => {
             const membername = req.params.membername;
