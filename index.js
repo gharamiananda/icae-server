@@ -102,6 +102,7 @@ async function run() {
         const toolRoomAboutCollection = client.db('icare_data').collection('tool_room')
 
         const courseDetailCollection = client.db('icare_data').collection('course_detail')
+        const collegeNewCollection = client.db('icare_data').collection('college_new_collection')
 
 
 
@@ -110,6 +111,14 @@ async function run() {
 
 
 
+
+
+
+
+        app.get('/college_new_collection_get', async (req, res) => {
+            const result = await collegeNewCollection.find().toArray();
+            res.send(result)
+        });
 
 
 
@@ -152,6 +161,14 @@ async function run() {
         app.get('/inner_banner_get', async (req, res) => {
             const result = await innerBannerCollection.find().toArray();
             res.send(result)
+        });
+
+        app.post('/college_new_collection_post', async (req, res) => {
+            const collage = req.body;
+            console.log(collage)
+            const result = await collegeNewCollection.insertOne(collage);
+            res.send(result);
+
         });
 
         app.post('/collage_course_post', async (req, res) => {
@@ -569,6 +586,27 @@ async function run() {
         })
 
 
+        app.put('/college_single_status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body;
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedDoc = {
+                $set: {
+                    status: status.status,
+
+                }
+            }
+
+            const result = await collegeNewCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
         app.put('/finan-status/:id', async (req, res) => {
             const id = req.params.id;
             const status = req.body;
@@ -805,6 +843,13 @@ async function run() {
             console.log(id)
             const query = { _id: ObjectId(id) };
             const result = await bannerCollection.deleteOne(query);
+            res.send(result);
+        })
+        app.delete('/college_new_delete/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) };
+            const result = await collegeNewCollection.deleteOne(query);
             res.send(result);
         })
 
