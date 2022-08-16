@@ -253,6 +253,64 @@ async function run() {
         })
 
         // Update Api 
+        app.put('/college_new_collection_update/:id', async (req, res) => {
+            const id = req.params.id;
+            let data = req.body
+
+
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+
+            let updatedDoc;
+            if (data.image == "") {
+                console.log("image not selected");
+
+
+
+
+                updatedDoc = {
+                    $set: {
+                        collegename: data.collegename,
+                        phone: data.phone,
+                        website: data.website,
+                        address: data.address,
+                        courses: data.courses,
+                        textEditor: data.textEditor,
+
+
+
+
+                    }
+                }
+
+            }
+            else {
+                console.log('imasge seleted')
+                updatedDoc = {
+                    $set: {
+                        collegename: data.collegename,
+                        phone: data.phone,
+                        website: data.website,
+                        address: data.address,
+                        courses: data.courses,
+                        textEditor: data.textEditor,
+                        imageOne: data.imageOne,
+
+                    }
+                }
+            }
+
+            console.log(updatedDoc)
+
+
+            const result = await collegeNewCollection.updateOne(filter, updatedDoc, options);
+            res.send(result)
+
+        })
+
+
         app.put('/detailsss_course_update/:id', async (req, res) => {
             const id = req.params.id;
             let data = req.body
@@ -303,6 +361,8 @@ async function run() {
             res.send(result)
 
         })
+
+
 
 
         app.put('/team_member_update/:membername', async (req, res) => {
